@@ -3,7 +3,8 @@ import express from 'express';
 import exitHook from 'async-exit-hook';
 import { APIs_V1 } from './routes/v1';
 import { env } from './config/environment';
-import { CONNECT_DB, GET_DB, CLOSE_DB } from './config/mongodb';
+import { CONNECT_DB, CLOSE_DB } from './config/mongodb';
+import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware';
 
 const START_SERVER = () => {
   const app = express();
@@ -13,6 +14,9 @@ const START_SERVER = () => {
 
   // Use APIs V1
   app.use('/v1', APIs_V1);
+
+  // Middleware xử lý lỗi tập trung
+  app.use(errorHandlingMiddleware);
 
   app.listen(env.APP_PORT, env.APP_HOST, () => {
     console.log(
