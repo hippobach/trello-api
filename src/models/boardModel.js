@@ -118,6 +118,13 @@ const update = async (boardId, updateData) => {
       }
     });
 
+    // Đối với những dữ liệu liên quan tới ObjectId thì biến đổi tại đây
+    if (updateData.columnOrderIds) {
+      updateData.columnOrderIds = updateData.columnOrderIds.map(
+        (_id) => new ObjectId(_id)
+      );
+    }
+
     // db.collection.findOneAndUpdate( filter, update, options )
     const result = await GET_DB()
       .collection(BOARD_COLLECTION_NAME)
