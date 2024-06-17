@@ -23,11 +23,21 @@ const START_SERVER = () => {
   // Middleware xử lý lỗi tập trung
   app.use(errorHandlingMiddleware);
 
-  app.listen(env.APP_PORT, env.APP_HOST, () => {
-    console.log(
-      `Hello ${env.AUTHOR}, Back-end server is running at http://${env.APP_HOST}:${env.APP_PORT}/`
-    );
-  });
+  // Môi trường Production
+  if (env.BUILD_MODE === 'production') {
+    app.listen(process.env.PORT, () => {
+      console.log(
+        `Production: Hello ${env.AUTHOR}, Back-end server is running at ${process.env.PORT}`
+      );
+    });
+  } else {
+    // Môi trường Local Dev
+    app.listen(env.LOCAL_DEV_APP_PORT, env.LOCAL_DEV_APP_HOST, () => {
+      console.log(
+        `Local Dev: Hello ${env.AUTHOR}, Back-end server is running at http://${env.LOCAL_DEV_APP_HOST}:${env.LOCAL_DEV_APP_PORT}/`
+      );
+    });
+  }
 
   // Thực hiện các tác vụ cleanup trước khi dừng server
   exitHook(() => {
