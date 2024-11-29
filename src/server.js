@@ -4,7 +4,7 @@ import exitHook from 'async-exit-hook';
 import cors from 'cors';
 import { corsOptions } from '~/config/cors';
 import { APIs_V1 } from './routes/v1';
-import { env } from './config/environment';
+import { env } from '~/config/environment';
 import { CONNECT_DB, CLOSE_DB } from './config/mongodb';
 import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware';
 
