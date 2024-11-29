@@ -5,6 +5,8 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from '~/utils/ApiError';
 import { pickUser } from '~/utils/formatters';
 import { userModel } from '~/models/userModel';
+import { WEBSITE_DOMAIN } from '~/utils/constants';
+import { BrevoProvider } from '~/providers/BrevoProvider';
 
 const createNew = async (reqBody) => {
   try {
@@ -25,9 +27,20 @@ const createNew = async (reqBody) => {
     // Lưu vào db
     const createdUser = await userModel.createNew(newUser);
     const getNewUser = await userModel.findOneById(createdUser.insertedId);
-    return pickUser(getNewUser);
-    // Gửi mail để người dùng xác thực tài khoản
+
+    // Gửi mail để cho người dùng xác thực tài khoản
+    const verificationLink = `${WEBSITE_DOMAIN}/account/verification?email=${getNewUser.email}&token=${getNewUser.verifyToken}`;
+    const customSubject = 'Please verify your email before using our service!';
+    const htmlContent = `
+    <h3>Here is your verification link:</h3>
+    <h3>${verificationLink}</h3>
+    <h3>Sincerely, <br/> Bach Nguyen</h3>`;
+
+    // Gọi tới provider gửi mail
+    await BrevoProvider.sendEmail(getNewUser.email, customSubject, htmlContent);
+
     // Trả về dữ liệu cho phía controller
+    return pickUser(getNewUser);
   } catch (error) {
     throw error;
   }
